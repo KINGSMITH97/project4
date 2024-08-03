@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  connection: local
+  vars_files:
+    - aws_credentials.yml
+
+  tasks:
+    - name: Create 3 EC2 instances 
+      amazon.aws.ec2_instance: 
+        name: "{{ item.name }}"
+        key_name: "keyp"
+        instance_type: t2.micro
+        security_group: default
+        region: "us-east-1"
+        network: 
+          assign_public_ip: true
+        image_id: "{{ item.image }}"
+        aws_access_key: "{{ access_key }}"
+        aws_secret_access_key: "{{ secret_key }}"
+        tags: 
+          Environment: "{{ item.name }}"
+      loop: 
+        - { name: "managed_node_1", image: "ami-0ba9883b710b05ac6" }
+        - { name: "managed_node_2", image: "ami-04a81a99f5ec58529" }
+        - { name: "managed_node_3", image: "ami-04a81a99f5ec58529" }
